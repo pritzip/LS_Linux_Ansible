@@ -1,0 +1,11 @@
+---
+- hosts: mysqldb,!localhost,!127.0.0.1
+  become: yes
+  strategy: free
+  ignore_errors: yes
+
+  collections:
+    - devsec.hardening
+  roles:
+    -- mysql_hardening
+

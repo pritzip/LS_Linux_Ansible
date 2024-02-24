@@ -1,0 +1,11 @@
+---
+- hosts: linux,!localhost,!127.0.0.1
+  become: yes
+  ignore_errors: yes
+  connection: paramiko 
+
+  tasks:
+  - name: Enable falcon agent
+    import_role:
+      name: harden
+      tasks_from: crowdstrike

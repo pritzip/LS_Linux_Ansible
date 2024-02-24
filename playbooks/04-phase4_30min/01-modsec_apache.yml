@@ -1,0 +1,90 @@
+---
+- hosts: apache
+  become: yes
+
+  tasks:
+  - name: Install ModSecurity (apt)
+    apt:
+      name: libapache2-mod-security2
+      update_cache: yes
+      state: latest
+    when:
+    - ansible_os_family == "Debian"
+
+  - name: Install ModSecurity (yum)
+    yum:
+      name: mod_security
+      state: latest
+      update_cache: yes
+    when:
+    - ansible_os_family == "RedHat"
+    
+  - name: Install ModSecurity CRS (yum)
+    yum:
+      name: mod_security_crs
+      state: latest
+      update_cache: yes
+    when:
+    - ansible_os_family == "RedHat"
+
+  - name: Setup initial ModSec config
+    command: mv /etc/modsecurity/modsecurity.conf-recommended /etc/modsecurity/modsecurity.conf
+    become: yes
+    when:
+    - ansible_os_family == "Debian"
+
+  - name: Enable ModSecurity
+    become: yes
+    replace:
+      dest: /etc/modsecurity/modsecurity.conf
+      regexp: SecRuleEngine .*
+      replace: "SecRuleEngine On"
+    notify:
+      - restart apache
+    when:
+    - ansible_os_family == "Debian"
+
+  - name: Enable ModSecurity
+    become: yes
+    replace:
+      dest: /etc/httpd/conf.d/mod_security.conf
+      regexp: SecRuleEngine .*
+      replace: "SecRuleEngine On"
+    notify:
+      - restart apache
+    when:
+    - ansible_os_family == "RedHat"
+    
+  - name: Activate all ModSec base rules
+    become: yes
+    shell: for f in `ls /usr/share/modsecurity-crs/base_rules` ; do sudo ln -s /usr/share/modsecurity-crs/base_rules/$f /usr/share/modsecurity-crs/activated_rules/$f ; done
+  - name: Add main ruleset to ModSec config
+    become: yes
+    lineinfile:
+      path: /etc/modsecurity/modsecurity.conf
+      line: "IncludeOptional /usr/share/modsecurity-crs/*.conf"
+    when:
+    - ansible_os_family == "Debian"
+
+  - name: Add activated rulesets to ModSec config
+    become: yes
+    lineinfile:
+      path: /etc/modsecurity/modsecurity.conf
+      line: "IncludeOptional /usr/share/modsecurity-crs/activated_rules/*.conf"
+    notify:
+      - restart apache
+    when:
+    - ansible_os_family == "Debian"
+
+  handlers:
+  - name: restart apache
+    become: yes
+    service: name=apache2 state=restarted
+    when:
+    - ansible_os_family == "Debian"
+
+  - name: restart httpd
+    become: yes
+    service: name=httpd state=restarted
+    when:
+    - ansible_os_family == "RedHat"

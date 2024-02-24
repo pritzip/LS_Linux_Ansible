@@ -1,0 +1,9 @@
+---
+- name: Bootsrap 
+  hosts: all,!localhost,!127.0.0.1
+  connection: paramiko
+  gather_facts: no
+  tasks:
+  - include_role:
+      name: cleanup_users
+      tasks_from: bootstrap

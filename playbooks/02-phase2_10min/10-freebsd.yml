@@ -1,0 +1,16 @@
+---
+- hosts: freebsd,!localhost,!127.0.0.1
+  become: yes
+  ignore_errors: yes
+  connection: paramiko 
+
+  tasks:
+  - name: change root shell to bash
+    user:
+      name: root
+      shell: /bin/bash
+
+  - name: FreeBSD hardening tasks
+    import_role:
+      name: harden
+      tasks_from: freebsd

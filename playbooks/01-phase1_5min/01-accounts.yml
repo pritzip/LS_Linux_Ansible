@@ -1,0 +1,35 @@
+---
+- name: Initial deployment of accounts and keys
+  hosts: all,!localhost,!127.0.0.1
+  connection: paramiko
+  gather_facts: no
+  become: yes
+  ignore_errors: yes
+    
+  tasks:
+  - name: Check if connection is possible using keys
+    command: ssh -o User={{ user[0].name }} -o ConnectTimeout=10 -o PreferredAuthentications=publickey -o PubkeyAuthentication=yes {{ ansible_host }} /bin/true
+    register: login
+    connection: local
+    ignore_errors: yes
+    changed_when: False
+
+  - block:        
+    - include_role:
+        name: cleanup_users
+      
+    - copy:
+        content: 'Phase1 complete, cross your fingers'
+        dest: /tmp/.01-phase1
+        force: no
+
+    - name: Reboot host
+      reboot:
+        msg: 'Phase1 reboot'
+        connect_timeout: 5
+        reboot_timeout: 600
+        pre_reboot_delay: 0
+        post_reboot_delay: 30
+        test_command: whoami
+
+    when: login is failed

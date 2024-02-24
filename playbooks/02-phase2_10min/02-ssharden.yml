@@ -1,0 +1,22 @@
+---
+- name: SSH hardening
+  hosts: linux,!localhost,!127.0.0.1
+  collections:
+    - devsec.hardening
+  roles:
+    - ssh_hardening
+  connection: paramiko
+  become: yes
+  vars:
+    ssh_custom_options:
+      - "Include /etc/ssh/ssh_config.d/*"
+    ssh_custom_options:
+      - "AcceptEnv LANG"
+
+  tasks:
+  - copy:
+      content: 'Phase2 complete, cross your fingers'
+      dest: /tmp/.02-phase2
+      force: no
+    ignore_errors: yes
+

@@ -1,0 +1,9 @@
+---
+- hosts: apache,!localhost,!127.0.0.1
+  become: yes
+  strategy: free
+  ignore_errors: yes
+
+  roles:
+    - juju4.harden_apache
+

@@ -1,0 +1,36 @@
+---
+- name: Reconnaissance (Linux)
+  ignore_errors: yes
+  hosts: linux,!localhost,!127.0.0.1
+  connection: paramiko
+  become: yes
+
+  tasks:
+  - name: download linpeas
+    get_url:
+      url: https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas.sh
+      dest: /tmp/
+      mode: 0755
+
+  - name: execute linpeas script
+    shell: ./linpeas.sh -a > linpeas.txt
+    args:
+      chdir: /tmp/
+    register: linpeas_out
+    failed_when: False
+
+  - name: Collect linpeas execution results
+    copy:
+      content: "{{linpeas_out.stdout}}"
+      dest: "{{ host_recon_dir }}/linpeas_stdout.txt"
+      force: yes
+    become: no
+    delegate_to: localhost
+
+  - name: Collect linpeas error results
+    copy:
+      content: "{{linpeas_out.stderr}}"
+      dest: "{{ host_recon_dir }}/linpeas_stderr.txt"
+      force: yes
+    become: no
+    delegate_to: localhost

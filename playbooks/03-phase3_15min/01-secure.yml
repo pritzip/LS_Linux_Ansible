@@ -1,0 +1,57 @@
+---
+- hosts: all,!localhost,!127.0.0.1
+  connection: paramiko
+  become: yes
+  ignore_errors: yes
+  
+  roles:
+  - role: harden
+
+  tasks:
+  - name: Send logs to syslog servers
+    import_role:
+      name: harden
+      tasks_from: syslog
+    tags: syslog
+        
+  - name: Reboot
+    reboot:
+      msg: 'Phase3 reboot'
+      connect_timeout: 5
+      reboot_timeout: 600
+      pre_reboot_delay: 0
+      post_reboot_delay: 30
+      test_command: whoami
+    tags: reboot
+      
+  - name: Ensure fail2ban up and configured
+    import_role:
+      name: harden
+      tasks_from: fail2ban
+    tags: fail2ban
+
+  - name: Ensure rkhunter up and configured
+    import_role:
+      name: harden
+      tasks_from: rkhunter
+    tags: rkhunter
+      
+  - name: Ensure aide up and configured
+    import_role:
+      name: harden
+      tasks_from: aide
+    tags: aide
+    
+  - name: Ensure clamav up and configured
+    import_role:
+      name: harden
+      tasks_from: clamav
+    tags: clamav
+
+  - name: Watch for network connections
+    import_role:
+      name: harden
+      tasks_from: netwatch
+    tags: netwatch
+
+  

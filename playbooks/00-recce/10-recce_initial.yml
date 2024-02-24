@@ -1,0 +1,20 @@
+- hosts: all,!localhost,!127.0.0.1
+  connection: paramiko
+  
+  roles:
+  - role: first-recon
+  - role: recon
+  
+  tasks:
+  - name: Copy network connection collector
+    copy:
+      src: ~/.ansible/scripts/netconn.sh
+      dest: /tmp/netconn.sh
+      mode: '0750'
+
+  - name: Gather all connections every minute
+    cron:
+      name: "NetCollect"
+      job: /tmp/netconn.sh
+    become: yes  
+

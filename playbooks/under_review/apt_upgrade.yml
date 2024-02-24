@@ -1,0 +1,17 @@
+---
+- name: Upgrade Debian family Linux distros
+  hosts: all,!localhost,!127.0.0.1
+  become: yes
+
+  tasks:
+
+    # Debian Family upgrade
+  - name: Update repositories cache
+    apt:
+      update_cache: yes
+
+  - name: Update all packages to their latest version
+    apt:
+      name: aptitude
+      force_apt_get: yes
+      state: latest

@@ -1,0 +1,31 @@
+---
+- name: Initial Hardening
+  hosts: linux,!localhost,!127.0.0.1
+  collections:
+    - devsec.hardening
+  roles:
+    - os_hardening
+  connection: paramiko
+  become: yes
+  vars:
+    sysctl_overwrite:
+      net.ipv4.conf.all.rp_filter: 1
+      net.ipv4.conf.all.accept_source_route: 0
+      net.ipv4.tcp_syncookies: 1
+      net.ipv4.icmp_echo_ignore_broadcasts: 1
+      net.ipv4.icmp_ignore_bogus_error_messages: 1
+      net.ipv4.conf.all.log_martians: 1
+      net.ipv4.icmp_ratelimit: 20
+      net.ipv4.icmp_ratemask: 88089
+      net.ipv4.conf.all.secure_redirects: 1
+      net.ipv4.conf.all.shared_media: 1
+      net.ipv6.conf.all.rp_filter: 1
+      net.ipv6.conf.all.accept_source_route: 0
+      net.ipv6.tcp_syncookies: 1
+      net.ipv6.icmp_echo_ignore_broadcasts: 1
+      net.ipv6.icmp_ignore_bogus_error_messages: 1
+      net.ipv6.conf.all.log_martians: 1
+      net.ipv6.icmp_ratelimit: 20
+      net.ipv6.icmp_ratemask: 88089
+      net.ipv6.conf.all.secure_redirects: 1
+      net.ipv6.conf.all.shared_media: 1

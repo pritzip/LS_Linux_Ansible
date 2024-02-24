@@ -1,0 +1,20 @@
+---
+- name: Fetch network connections 
+  connection: paramiko
+  ignore_errors: yes
+  hosts: all,!localhost,!127.0.0.1
+  become: yes
+
+  tasks:
+  - name: Collect gathered network connections
+    fetch:
+      src: /tmp/netall.txt
+      dest: "{{ host_recon_dir }}/netall.txt"
+
+  - name: Stop cron job
+    cron:
+      name: "NetCollect"
+      state: absent
+
+  - name: Delete rnetwork connection files
+    shell: rm /tmp/net*
