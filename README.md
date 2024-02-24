@@ -11,13 +11,6 @@ Our purpose is to create ansible playbooks and shell scripts for the hardening a
 During the excercise the roles of the team will be :
 |  Name | Callsign | Role | Crowdstrike | Description|
 | ----- | -------- | ---- | ----------- | ---------- |
-| Nikolaidis | Banker | Head | ls22user13 | Coordinate efforts and Ansible operator |
-| Valsamidis | Dealer | BEG Head | ls22user14 | Coordinate efforts in BEG and Ansible operator |
-| Ntafos | Doorman | DMZ Infosec |  own  |Monitor firewalls |
-| Veniamidis | Eagle | BEG Infosec | ls22user15 |Monitor FreeBSD/Linux hosts |
-| Tsingelis | Joker | JIV Infosec - Forensics | ls22user16 | Monitor all BOB-JIV-KWT Linux hosts and provide Linux forensics |
-| Papanikolaou | Ace | BAF Forensics | ls22user17 | BAF linux forensics **(no pub key submitted)**  |
-| Papadakis | Adder | BAF Infosec | ls22user18 | Monitor linux hosts in BAF |
 
 ## Current Status
 Here you'll find the latest updates for LS22.
