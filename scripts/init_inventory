@@ -1,7 +1,0 @@
-#!/bin/bash
-INV=$(grep inventory= ~/.ansible.cfg | cut -d= -f2 | sed "s|^~|$HOME|")
-sed '/ansible_user/d;/ansible_ssh_pass/d;/ansible_become_password/d;/ansible_ssh_private_key/d;\
-  /ansible_ssh_public_key/d;/initial_pass:/a \        ansible_user: \"{{ domain_users\[0\] }}\"\
-  \n        ansible_ssh_pass: \"{{ initial_pass }}\"\n        ansible_become_password: \"{{ initial_pass }}\"' $INV\
-  | sed '/root_pass:/a \              become_password: \"{{ root_pass }}\"\n              become_method=su" \
-  | tee $(dirname $INV)/init_inventory.yml
